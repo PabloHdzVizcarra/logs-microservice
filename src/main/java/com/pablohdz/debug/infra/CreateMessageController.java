@@ -11,11 +11,9 @@ import java.util.List;
 
 public class CreateMessageController implements HttpHandler {
     private final List<String> DEFAULT_VALUES =
-        Arrays.asList("message", "fileName", "serviceName");
+        Arrays.asList("message", "filename", "service");
     private final FileUseCases useCases;
     private final ControllersResponse response;
-    // TODO: 6/19/21 append the error in the file
-    // TODO: 6/19/21 Response with ok is all successful
 
     public CreateMessageController(FileUseCases useCases, ControllersResponse response) {
         this.useCases = useCases;
@@ -31,9 +29,9 @@ public class CreateMessageController implements HttpHandler {
             HashMap<String, String> dataBody = splitRequestBody(reader);
             checkValuesInRequestBody(dataBody);
             useCases.createFileUseCase(
-                dataBody.get("fileName"),
+                dataBody.get("filename"),
                 dataBody.get("message"),
-                dataBody.get("serviceName"));
+                dataBody.get("service"));
 
             response.withText(exchange, 200);
         } catch (IOException exception) {
