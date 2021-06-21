@@ -1,5 +1,6 @@
 package com.pablohdz.debug.infra;
 
+import com.pablohdz.debug.application.FileUseCases;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -11,11 +12,12 @@ import java.util.List;
 public class CreateMessageController implements HttpHandler {
     private final List<String> DEFAULT_VALUES =
         Arrays.asList("message", "fileName", "serviceName");
-    // TODO: 6/20/21 create file if not exists
+    private final FileUseCases useCases;
     // TODO: 6/19/21 append the error in the file
     // TODO: 6/19/21 Response with ok is all successful
 
-    public CreateMessageController() {
+    public CreateMessageController(FileUseCases useCases) {
+        this.useCases = useCases;
     }
 
     @Override
@@ -26,11 +28,14 @@ public class CreateMessageController implements HttpHandler {
 
             HashMap<String, String> dataBody = splitRequestBody(reader);
             checkValuesInRequestBody(dataBody);
+            useCases.createFileUseCase(dataBody.get("fileName"));
             sendResponseJson(exchange);
         } catch (IOException exception) {
             System.out.println(exception.getMessage());
         } catch (IllegalArgumentException exception) {
             sendResponseText(exchange, exception.getMessage());
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
 
