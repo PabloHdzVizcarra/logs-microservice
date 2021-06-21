@@ -1,14 +1,15 @@
 package com.pablohdz.debug.infra;
 
 import com.pablohdz.debug.application.FileUseCases;
+import com.pablohdz.debug.domain.ErrorLog;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public class GetMessagesController implements HttpHandler {
-    // TODO: 6/21/21 if not exists send error response
     // TODO: 6/21/21 create a data structure with all records in file
     // TODO: 6/21/21 send records to client
     private final ControllersResponse response;
@@ -27,8 +28,9 @@ public class GetMessagesController implements HttpHandler {
             .queryToMap(exchange.getRequestURI().getQuery());
         try {
             String filename = query.get("filename");
-            boolean existsFile = fileUseCases.checkIfExistsFile(filename);
-            System.out.println(existsFile);
+            fileUseCases.checkIfExistsFile(filename);
+            List<ErrorLog> errorLogs = fileUseCases.getErrorsFromFile(filename);
+            System.out.println(errorLogs);
         } catch (NullPointerException exception) {
             response.withText(
                 exchange,
