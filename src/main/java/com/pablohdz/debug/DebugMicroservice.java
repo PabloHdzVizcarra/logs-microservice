@@ -23,7 +23,7 @@ public class DebugMicroservice {
             server.start();
             System.out.println("Server is on in port 8080");
 
-        } catch (IOException exception) {
+        } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }
     }
