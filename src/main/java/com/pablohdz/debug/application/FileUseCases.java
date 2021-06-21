@@ -25,6 +25,12 @@ public class FileUseCases {
 
     }
 
+    public boolean checkIfExistsFile(String filename) {
+        String pathString = String.format("src/main/resources/%s.txt", filename);
+        File file = new File(pathString);
+        return file.exists();
+    }
+
     private void createFileIfNotExists(String path) throws IOException {
         File file = new File(path);
         file.createNewFile();
