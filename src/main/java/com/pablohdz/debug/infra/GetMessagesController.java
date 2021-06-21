@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public class GetMessagesController implements HttpHandler {
-    // TODO: 6/21/21 create a data structure with all records in file
-    // TODO: 6/21/21 send records to client
     private final ControllersResponse response;
     private final ControllerOperations operations;
     private final FileUseCases fileUseCases;
@@ -30,7 +28,8 @@ public class GetMessagesController implements HttpHandler {
             String filename = query.get("filename");
             fileUseCases.checkIfExistsFile(filename);
             List<ErrorLog> errorLogs = fileUseCases.getErrorsFromFile(filename);
-            System.out.println(errorLogs);
+            String json = operations.mapListToString(errorLogs);
+            response.withJson(exchange, 200, json);
         } catch (NullPointerException exception) {
             response.withText(
                 exchange,

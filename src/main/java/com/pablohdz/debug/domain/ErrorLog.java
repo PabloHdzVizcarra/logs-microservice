@@ -9,6 +9,14 @@ public class ErrorLog {
         this.message = message;
     }
 
+    public String getService() {
+        return service;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
     @Override
     public String toString() {
         return "service = " + this.service +

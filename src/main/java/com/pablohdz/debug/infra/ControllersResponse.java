@@ -23,4 +23,12 @@ public class ControllersResponse {
         outputStream.write(message.getBytes());
         outputStream.close();
     }
+
+    public void withJson(HttpExchange exchange, Integer statusCode, String data) throws IOException {
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
+        exchange.sendResponseHeaders(statusCode, data.length());
+        OutputStream outputStream = exchange.getResponseBody();
+        outputStream.write(data.getBytes());
+        outputStream.close();
+    }
 }

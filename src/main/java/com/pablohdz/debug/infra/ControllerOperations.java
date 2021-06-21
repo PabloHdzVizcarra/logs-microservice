@@ -1,6 +1,9 @@
 package com.pablohdz.debug.infra;
 
+import com.pablohdz.debug.domain.ErrorLog;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ControllerOperations {
@@ -22,5 +25,23 @@ public class ControllerOperations {
            }
         }
         return result;
+    }
+
+    public String mapListToString(List<ErrorLog> list) {
+        StringBuilder errors = new StringBuilder();
+
+        list.forEach(errorLog -> {
+            String error = String.format(
+                "\"%s\": \"%s\",",
+                errorLog.getService(), errorLog.getMessage());
+            errors.append(error);
+        });
+
+        return cleanResponse(errors.toString());
+    }
+
+    private String cleanResponse(String data) {
+        String deleteComma = data.substring(0, data.length() - 1);
+        return String.format("{%s}", deleteComma);
     }
 }
