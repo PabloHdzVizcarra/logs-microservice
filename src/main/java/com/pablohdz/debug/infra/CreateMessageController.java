@@ -28,7 +28,11 @@ public class CreateMessageController implements HttpHandler {
 
             HashMap<String, String> dataBody = splitRequestBody(reader);
             checkValuesInRequestBody(dataBody);
-            useCases.createFileUseCase(dataBody.get("fileName"));
+            useCases.createFileUseCase(
+                dataBody.get("fileName"),
+                dataBody.get("message"),
+                dataBody.get("serviceName"));
+
             sendResponseJson(exchange);
         } catch (IOException exception) {
             System.out.println(exception.getMessage());
@@ -73,7 +77,7 @@ public class CreateMessageController implements HttpHandler {
                     .substring(1, strings.get(1).length() - 2);
                 body.put(key, value);
             });
-        
+
         return body;
     }
 
