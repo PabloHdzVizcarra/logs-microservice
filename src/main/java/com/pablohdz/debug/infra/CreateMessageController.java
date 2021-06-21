@@ -9,7 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CreateMessageController implements HttpHandler {
-    // TODO: Create file if not exists
+    private String[] DEFAULT_VALUES = {"message", "fileName", "serviceName"};
+    // TODO: 6/20/21 check if values is present "message" "fileName" "serviceName"
+    // TODO: 6/20/21 send response with error if the values is not present
+    // TODO: 6/20/21 create file if not exists
     // TODO: 6/19/21 append the error in the file
     // TODO: 6/19/21 Response with ok is all successful
 
@@ -20,6 +23,7 @@ public class CreateMessageController implements HttpHandler {
             new InputStreamReader(body))) {
 
             HashMap<String, String> dataBody = splitRequestBody(reader);
+            System.out.println(dataBody);
             sendResponseJson(exchange);
         } catch (IOException exception) {
             System.out.println(exception.getMessage());
