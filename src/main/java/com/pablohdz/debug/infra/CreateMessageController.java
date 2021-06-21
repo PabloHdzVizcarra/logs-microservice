@@ -3,10 +3,7 @@ package com.pablohdz.debug.infra;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class CreateMessageController implements HttpHandler {
     // TODO: Create file if not exists
@@ -25,12 +22,28 @@ public class CreateMessageController implements HttpHandler {
             while ((responseLine = reader.readLine()) != null) {
                 request.append(responseLine.trim());
             }
-
             System.out.println(request);
-        } catch (Exception exception) {
+            sendResponseJson(exchange);
+        } catch (IOException exception) {
             System.out.println(exception.getMessage());
         }
     }
 
+    private void sendResponseText(HttpExchange exchange) throws IOException {
+        String response = "This is the example response";
+        exchange.sendResponseHeaders(200, response.length());
+        OutputStream outputStream = exchange.getResponseBody();
+        outputStream.write(response.getBytes());
+        outputStream.close();
+    }
+
+    private void sendResponseJson(HttpExchange exchange) throws IOException {
+        String response = "{ \"message\": \"Hello from this server\"}";
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
+        exchange.sendResponseHeaders(200, response.length());
+        OutputStream outputStream = exchange.getResponseBody();
+        outputStream.write(response.getBytes());
+        outputStream.close();
+    }
 
 }
