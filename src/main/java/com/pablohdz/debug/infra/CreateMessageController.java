@@ -4,6 +4,9 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class CreateMessageController implements HttpHandler {
     // TODO: Create file if not exists
@@ -12,21 +15,34 @@ public class CreateMessageController implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) {
-        System.out.println(exchange.getRequestMethod());
         InputStream body = exchange.getRequestBody();
         try (BufferedReader reader = new BufferedReader(
             new InputStreamReader(body))) {
 
-            StringBuilder request = new StringBuilder();
-            String responseLine;
-            while ((responseLine = reader.readLine()) != null) {
-                request.append(responseLine.trim());
-            }
-            System.out.println(request);
+            HashMap<String, String> dataBody = splitRequestBody(reader);
             sendResponseJson(exchange);
         } catch (IOException exception) {
             System.out.println(exception.getMessage());
         }
+    }
+
+    private HashMap<String, String> splitRequestBody(BufferedReader reader) throws IOException {
+        StringBuilder request = new StringBuilder();
+        String responseLine;
+        while ((responseLine = reader.readLine()) != null) {
+            request.append(responseLine.trim());
+        }
+        String data = request.toString();
+        String data2 = data.substring(1, data.length() - 1);
+        HashMap<String, String> body = new HashMap<>();
+        Arrays.stream(data2
+            .split(","))
+            .forEach(elem -> {
+                List<String> strings = Arrays.asList(elem.split(":"));
+                body.put(strings.get(0), strings.get(1));
+            });
+
+        return body;
     }
 
     private void sendResponseText(HttpExchange exchange) throws IOException {
@@ -45,5 +61,4 @@ public class CreateMessageController implements HttpHandler {
         outputStream.write(response.getBytes());
         outputStream.close();
     }
-
 }
