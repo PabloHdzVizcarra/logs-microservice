@@ -9,24 +9,38 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CreateMessageController implements HttpHandler {
-    private String[] DEFAULT_VALUES = {"message", "fileName", "serviceName"};
-    // TODO: 6/20/21 check if values is present "message" "fileName" "serviceName"
-    // TODO: 6/20/21 send response with error if the values is not present
+    private final List<String> DEFAULT_VALUES =
+        Arrays.asList("message", "fileName", "serviceName");
     // TODO: 6/20/21 create file if not exists
     // TODO: 6/19/21 append the error in the file
     // TODO: 6/19/21 Response with ok is all successful
 
+    public CreateMessageController() {
+    }
+
     @Override
-    public void handle(HttpExchange exchange) {
+    public void handle(HttpExchange exchange) throws IOException {
         InputStream body = exchange.getRequestBody();
         try (BufferedReader reader = new BufferedReader(
             new InputStreamReader(body))) {
 
             HashMap<String, String> dataBody = splitRequestBody(reader);
-            System.out.println(dataBody);
+            checkValuesInRequestBody(dataBody);
             sendResponseJson(exchange);
         } catch (IOException exception) {
             System.out.println(exception.getMessage());
+        } catch (IllegalArgumentException exception) {
+            sendResponseText(exchange, exception.getMessage());
+        }
+    }
+
+    private void checkValuesInRequestBody(HashMap<String, String> dataBody) throws IllegalArgumentException {
+        for (String elem : DEFAULT_VALUES) {
+            if (!dataBody.containsKey(elem)) {
+                throw new IllegalArgumentException(
+                    "The request not contain the required " + elem + " key"
+                );
+            }
         }
     }
 
@@ -39,21 +53,29 @@ public class CreateMessageController implements HttpHandler {
         String data = request.toString();
         String data2 = data.substring(1, data.length() - 1);
         HashMap<String, String> body = new HashMap<>();
+
         Arrays.stream(data2
             .split(","))
             .forEach(elem -> {
                 List<String> strings = Arrays.asList(elem.split(":"));
-                body.put(strings.get(0), strings.get(1));
+                String key = strings
+                    .get(0)
+                    .trim()
+                    .substring(1, strings.get(0).length() - 1);
+                String value = strings
+                    .get(1)
+                    .trim()
+                    .substring(1, strings.get(1).length() - 2);
+                body.put(key, value);
             });
-
+        
         return body;
     }
 
-    private void sendResponseText(HttpExchange exchange) throws IOException {
-        String response = "This is the example response";
-        exchange.sendResponseHeaders(200, response.length());
+    private void sendResponseText(HttpExchange exchange, String message) throws IOException {
+        exchange.sendResponseHeaders(422, message.length());
         OutputStream outputStream = exchange.getResponseBody();
-        outputStream.write(response.getBytes());
+        outputStream.write(message.getBytes());
         outputStream.close();
     }
 
