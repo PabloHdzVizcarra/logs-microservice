@@ -34,6 +34,11 @@ public class GetMessagesController implements HttpHandler {
                 exchange,
                 "The filename query is missing ",
                 422);
+        } catch (IOException ioException) {
+            response.withText(
+                exchange,
+                ioException.getMessage(),
+                404);
         }
         response.withText(exchange, 201);
     }
