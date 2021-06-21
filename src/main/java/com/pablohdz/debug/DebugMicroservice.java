@@ -3,6 +3,7 @@ package com.pablohdz.debug;
 import com.pablohdz.debug.application.FileUseCases;
 import com.pablohdz.debug.infra.ControllersResponse;
 import com.pablohdz.debug.infra.CreateMessageController;
+import com.pablohdz.debug.infra.GetMessagesController;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
@@ -14,7 +15,10 @@ public class DebugMicroservice {
             HttpServer server = createServer();
             server.createContext(
                 "/api/v1/create",
-                new CreateMessageController( new FileUseCases(), new ControllersResponse()));
+                new CreateMessageController(new FileUseCases(), new ControllersResponse()));
+            server.createContext(
+                "/api/v1/records",
+                new GetMessagesController(new ControllersResponse()));
             server.setExecutor(null);
             server.start();
             System.out.println("Server is on in port 8080");

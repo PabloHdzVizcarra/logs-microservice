@@ -35,11 +35,11 @@ public class CreateMessageController implements HttpHandler {
                 dataBody.get("message"),
                 dataBody.get("serviceName"));
 
-            response.sendResponseText(exchange, 200);
+            response.withText(exchange, 200);
         } catch (IOException exception) {
             System.out.println(exception.getMessage());
         } catch (IllegalArgumentException exception) {
-            response.sendResponseText(exchange, exception.getMessage(), 422);
+            response.withText(exchange, exception.getMessage(), 422);
         } catch (Exception exception) {
             exception.printStackTrace();
         }
