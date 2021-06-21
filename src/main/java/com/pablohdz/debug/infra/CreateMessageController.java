@@ -13,11 +13,13 @@ public class CreateMessageController implements HttpHandler {
     private final List<String> DEFAULT_VALUES =
         Arrays.asList("message", "fileName", "serviceName");
     private final FileUseCases useCases;
+    private final ControllersResponse response;
     // TODO: 6/19/21 append the error in the file
     // TODO: 6/19/21 Response with ok is all successful
 
-    public CreateMessageController(FileUseCases useCases) {
+    public CreateMessageController(FileUseCases useCases, ControllersResponse response) {
         this.useCases = useCases;
+        this.response = response;
     }
 
     @Override
@@ -33,11 +35,11 @@ public class CreateMessageController implements HttpHandler {
                 dataBody.get("message"),
                 dataBody.get("serviceName"));
 
-            sendResponseJson(exchange);
+            response.sendResponseText(exchange, 200);
         } catch (IOException exception) {
             System.out.println(exception.getMessage());
         } catch (IllegalArgumentException exception) {
-            sendResponseText(exchange, exception.getMessage());
+            response.sendResponseText(exchange, exception.getMessage(), 422);
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -79,13 +81,6 @@ public class CreateMessageController implements HttpHandler {
             });
 
         return body;
-    }
-
-    private void sendResponseText(HttpExchange exchange, String message) throws IOException {
-        exchange.sendResponseHeaders(422, message.length());
-        OutputStream outputStream = exchange.getResponseBody();
-        outputStream.write(message.getBytes());
-        outputStream.close();
     }
 
     private void sendResponseJson(HttpExchange exchange) throws IOException {
